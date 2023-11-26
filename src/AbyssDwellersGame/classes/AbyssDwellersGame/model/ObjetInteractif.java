@@ -12,8 +12,8 @@ public sealed class ObjetInteractif extends Objet permits Coffre {
     
      private String message;
     
-    public ObjetInteractif(String nom, int posX, int posY, String message) {
-        super(nom, posX, posY);
+    public ObjetInteractif(String nom, int posX, int posY, float width, float height, float rapidite, String message) {
+        super(nom, posX, posY, width, height, rapidite);
         this.message= message;
     }
     

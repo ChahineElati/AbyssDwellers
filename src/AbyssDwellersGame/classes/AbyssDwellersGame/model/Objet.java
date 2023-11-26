@@ -8,28 +8,18 @@ package AbyssDwellersGame.model;
  *
  * @author chahi
  */
-public  sealed abstract class Objet permits ObjetStatique, ObjetInteractif {
+public  sealed abstract class Objet extends GameObject permits ObjetStatique, ObjetInteractif {
     
     private String nom;
-    private int  posX;
-    private int posY;
+
     
-    public Objet(String nom, int posX, int posY) {
+    public Objet(String nom, int posX, int posY, float width, float height, float rapidite) {
+        super(posX, posY, width, height, rapidite);
         this.nom= nom;
-        this.posX= posX;
-        this.posY= posY;
+
     }
     
     public String getNom() {
         return nom;
     }
-     
-    public int getPosX() {
-        return posX;
-    }
-    
-    public int getPosY() {
-        return posY;
-    }
-    
 }

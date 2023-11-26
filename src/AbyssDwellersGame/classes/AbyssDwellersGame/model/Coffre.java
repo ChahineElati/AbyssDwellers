@@ -10,12 +10,12 @@ package AbyssDwellersGame.model;
  */
 public  final class Coffre extends ObjetInteractif {
     
-     private int capacite;
+    private int capacite;
     private boolean verrouille;
     private String cle;
     
-    public Coffre(String nom, int posX, int posY, String message, int capacite, boolean verrouille) {
-        super(nom, posX, posY, message);
+    public Coffre(String nom, int posX, int posY, float width, float height, float rapidite, String message, int capacite, boolean verrouille) {
+        super(nom, posX, posY, width, height, rapidite, message);
         this.capacite= capacite;
         this.verrouille= verrouille;
         this.cle= "";

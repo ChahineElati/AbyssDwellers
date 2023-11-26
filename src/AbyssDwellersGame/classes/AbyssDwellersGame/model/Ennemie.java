@@ -4,6 +4,9 @@
  */
 package AbyssDwellersGame.model;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 /**
  *
  * @author chahi
@@ -12,8 +15,8 @@ public final class Ennemie extends Caractere {
     
      private boolean agressive;
 
-    public Ennemie(boolean agressive, String nom, boolean jouable, int posX, int posY, float rapidité) {
-        super(nom, jouable, posX, posY, rapidité);
+    public Ennemie(boolean agressive, String nom, boolean jouable, float posX, float posY, float width, float height, float rapidite, Image[] sprites) {
+        super(nom, jouable, posX, posY, width, height, rapidite, sprites);
         this.agressive = agressive;
     }
 

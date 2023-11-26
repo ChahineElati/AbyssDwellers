@@ -4,27 +4,51 @@
  */
 package AbyssDwellersGame.model;
 
+import java.util.ArrayList;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 /**
  *
  * @author chahi
  */
-public sealed abstract class Caractere permits Dweller, Ennemie {
+public sealed abstract class Caractere extends GameObject permits Dweller, Ennemie  {
+
     private String nom;
     private boolean jouable;
-    private int posX;
-    private int posY;
-    private float rapidité;
+    
     private boolean enCombat;
+    private ArrayList<GameObject> collisions;
     private Inventaire inventaire;
+    private ImageView image;
+    private Image[] sprites;
+    private String facing = "down";
 
-    public Caractere(String nom, boolean jouable, int posX, int posY, float rapidité) {
-        
+    public Inventaire getInventaire() {
+        return inventaire;
+    }
+
+    public ImageView getImage() {
+        return image;
+    }
+
+    public Image[] getSprites() {
+        return sprites;
+    }
+
+    public Caractere(String nom, boolean jouable, float posX, float posY, float width, float height, float rapidite, Image[] sprites) {
+        super(posX, posY, width, height, rapidite);
         this.nom = nom;
         this.jouable = jouable;
-        this.posX = posX;
-        this.posY = posY;
-        this.rapidité = rapidité;
         enCombat = false;
+        image = new ImageView();
+        image.setImage(sprites[0]);
+        image.setX(posX);
+        image.setY(posY);
+        this.sprites = sprites;
+        collisions = new ArrayList<>();
+
     }
 
     public String getNom() {
@@ -35,16 +59,10 @@ public sealed abstract class Caractere permits Dweller, Ennemie {
         return jouable;
     }
 
-    public int getPosX() {
-        return posX;
-    }
+    
 
-    public int getPosY() {
-        return posY;
-    }
-
-    public float getRapidité() {
-        return rapidité;
+    public ArrayList<GameObject> getCollisions() {
+        return collisions;
     }
 
     public boolean isEnCombat() {
@@ -55,21 +73,156 @@ public sealed abstract class Caractere permits Dweller, Ennemie {
         this.nom = nom;
     }
 
-    public void setPosX(int posX) {
-        this.posX = posX;
-    }
-
-    public void setPosY(int posY) {
-        this.posY = posY;
-    }
-
-    public void setRapidité(float rapidité) {
-        this.rapidité = rapidité;
-    }
 
     public void setEnCombat(boolean enCombat) {
         this.enCombat = enCombat;
     }
-    
-    
+
+    public void ajouterControls(Scene scene) {
+        scene.setOnKeyPressed((e) -> {
+            if (e.getCode().toString().equals("DOWN")) {
+                facing = "down";
+                if (!detecterCollision()) {
+                    posY += rapidite;
+                    image.setImage(sprites[0]);
+                    image.setY(posY);
+                } else {
+                    posY -= 3*rapidite;
+                }
+                System.out.println(facing);
+            }
+            if (e.getCode().toString().equals("UP")) {
+                facing = "up";
+                if (!detecterCollision()) {
+                    posY -= rapidite;
+                    image.setImage(sprites[1]);
+                    image.setY(posY);
+                } else {
+                    posY += 3*rapidite;
+                }
+                System.out.println(facing);
+            }
+            if (e.getCode().toString().equals("RIGHT")) {
+                facing = "right";
+                if (!detecterCollision()) {
+                    posX += rapidite;
+                    image.setImage(sprites[2]);
+                    image.setX(posX);
+                } else {
+                    posX -= 3*rapidite;
+                }
+                System.out.println(facing);
+            }
+            if (e.getCode().toString().equals("LEFT")) {
+                facing = "left";
+                if (!detecterCollision()) {
+                    posX -= rapidite;
+                    image.setImage(sprites[3]);
+                    image.setX(posX);
+                } else {
+                    posX += 3*rapidite;
+                }
+                System.out.println(facing);
+            }
+        }
+        );
+    }
+
+    public void ajouterCollision(GameObject caractere) {
+        collisions.add(caractere);
+    }
+
+    public boolean detecterCollision() {
+        boolean collide = false;
+        for (GameObject collision : collisions) {
+            
+            if(facing.equals("right")) {
+                if(
+                        posX+width >= collision.posX
+                        && posY + height >= collision.posY
+                        && posY <= collision.posY + height
+                        && posX <= collision.posX + collision.width
+                        ) {
+                    collide = true;
+                    System.out.println("collide left");
+                }
+            }
+            if(facing.equals("down")) {
+                if(
+                        posX+width >= collision.posX
+                        && posY + height >= collision.posY
+                        && posY <= collision.posY + height
+                        && posX <= collision.posX + collision.width
+                        ) {
+                    collide = true;
+                    System.out.println("collide top");
+                }
+            }
+            if(facing.equals("left")) {
+                if(
+                        posX+width >= collision.posX
+                        && posY + height >= collision.posY
+                        && posY <= collision.posY + height
+                        && posX <= collision.posX + collision.width
+                        ) {
+                    collide = true;
+                    System.out.println("collide right");
+                }
+            }
+            if(facing.equals("up")) {
+                if(
+                        posX+width >= collision.posX
+                        && posY + height >= collision.posY
+                        && posY <= collision.posY + height
+                        && posX <= collision.posX + collision.width
+                        ) {
+                    collide = true;
+                    System.out.println("collide down");
+                }
+            }
+                
+//            if (facing.equals("down")) {
+//                if (posY <= collision.getPosY() + collision.getHeight()
+//                        && posX + width >= collision.getPosX()
+//                        && posX <= collision.getPosX() + collision.getWidth()
+//                        && posY + height >= collision.getPosY()) {
+//                    collide = true;
+//                    System.out.println("collision up");
+//                }
+//            } else if (facing.equals("up")) {
+//                if (posY <= collision.getPosY() + collision.height
+//                        && posX + width >= collision.getPosX()
+//                        && posX <= collision.getPosX() + collision.getWidth()
+//                        && posY + height >= collision.getPosY()) {
+//                    collide = true;
+//                    System.out.println("collision down");
+//                }
+//            } else {
+//                collide = false;
+//            }
+//
+//            if (facing.equals("right")) {
+//                if (posY + height >= collision.getPosY()
+//                        && posX + width >= collision.getPosX()
+//                        && posY <= collision.getPosY() + collision.getHeight()
+//                        && posX <= collision.getPosX() + collision.width) {
+//                    collide = true;
+//                    System.out.println("collision left");
+//                } 
+//            } else if (facing.equals("left")) {
+//                if (posY + height >= collision.posY
+//                        && posY <= collision.getPosY() + collision.getHeight()
+//                        && posX <= collision.getPosX() + collision.getWidth()
+//                        && posX + width >= collision.getPosX()) {
+//                    collide = true;
+//                    System.out.println("collision right");
+//                }
+//            } else {
+//                collide = false;
+//            }
+        }
+
+        return collide;
+    }
+
 }

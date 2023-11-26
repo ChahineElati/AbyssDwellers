@@ -12,8 +12,8 @@ public final class ObjetStatique extends Objet {
     
     private String description;
     
-    public ObjetStatique(String nom, int posX, int posY, String description) {
-        super(nom, posX, posY);
+    public ObjetStatique(String nom, int posX, int posY, float width, float height, float rapidite, String description) {
+        super(nom, posX, posY, width, height, rapidite);
         this.description= description;
     }
     
