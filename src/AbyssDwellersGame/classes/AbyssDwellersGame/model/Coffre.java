@@ -4,6 +4,8 @@
  */
 package AbyssDwellersGame.model;
 
+import javafx.scene.image.Image;
+
 /**
  *
  * @author chahi
@@ -14,8 +16,8 @@ public  final class Coffre extends ObjetInteractif {
     private boolean verrouille;
     private String cle;
     
-    public Coffre(String nom, int posX, int posY, float width, float height, float rapidite, String message, int capacite, boolean verrouille) {
-        super(nom, posX, posY, width, height, rapidite, message);
+    public Coffre(String nom, int posX, int posY, float width, float height, float rapidite, Image image, String message, int capacite, boolean verrouille) {
+        super(nom, posX, posY, width, height, rapidite, image, message);
         this.capacite= capacite;
         this.verrouille= verrouille;
         this.cle= "";

@@ -13,11 +13,11 @@ import javafx.scene.image.ImageView;
  *
  * @author chahi
  */
-public sealed abstract class Caractere extends GameObject permits Dweller, Ennemie  {
+public sealed abstract class Caractere extends GameObject permits Dweller, Ennemie {
 
     private String nom;
     private boolean jouable;
-    
+
     private boolean enCombat;
     private ArrayList<GameObject> collisions;
     private Inventaire inventaire;
@@ -59,8 +59,6 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
         return jouable;
     }
 
-    
-
     public ArrayList<GameObject> getCollisions() {
         return collisions;
     }
@@ -72,7 +70,6 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
     public void setNom(String nom) {
         this.nom = nom;
     }
-
 
     public void setEnCombat(boolean enCombat) {
         this.enCombat = enCombat;
@@ -87,7 +84,7 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                     image.setImage(sprites[0]);
                     image.setY(posY);
                 } else {
-                    posY -= 3*rapidite;
+                    posY -= 3 * rapidite;
                 }
                 System.out.println(facing);
             }
@@ -98,7 +95,7 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                     image.setImage(sprites[1]);
                     image.setY(posY);
                 } else {
-                    posY += 3*rapidite;
+                    posY += 3 * rapidite;
                 }
                 System.out.println(facing);
             }
@@ -109,7 +106,7 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                     image.setImage(sprites[2]);
                     image.setX(posX);
                 } else {
-                    posX -= 3*rapidite;
+                    posX -= 3 * rapidite;
                 }
                 System.out.println(facing);
             }
@@ -120,7 +117,7 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                     image.setImage(sprites[3]);
                     image.setX(posX);
                 } else {
-                    posX += 3*rapidite;
+                    posX += 3 * rapidite;
                 }
                 System.out.println(facing);
             }
@@ -135,94 +132,55 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
     public boolean detecterCollision() {
         boolean collide = false;
         for (GameObject collision : collisions) {
-            
-            if(facing.equals("right")) {
-                if(
-                        posX+width >= collision.posX
+
+            if (facing.equals("right")) {
+                if (posX + width >= collision.posX
                         && posY + height >= collision.posY
                         && posY <= collision.posY + height
-                        && posX <= collision.posX + collision.width
-                        ) {
+                        && posX <= collision.posX + collision.width) {
                     collide = true;
                     System.out.println("collide left");
                 }
             }
-            if(facing.equals("down")) {
-                if(
-                        posX+width >= collision.posX
+            if (facing.equals("down")) {
+                if (posX + width >= collision.posX
                         && posY + height >= collision.posY
                         && posY <= collision.posY + height
-                        && posX <= collision.posX + collision.width
-                        ) {
+                        && posX <= collision.posX + collision.width) {
                     collide = true;
                     System.out.println("collide top");
                 }
             }
-            if(facing.equals("left")) {
-                if(
-                        posX+width >= collision.posX
+            if (facing.equals("left")) {
+                if (posX + width >= collision.posX
                         && posY + height >= collision.posY
                         && posY <= collision.posY + height
-                        && posX <= collision.posX + collision.width
-                        ) {
+                        && posX <= collision.posX + collision.width) {
                     collide = true;
                     System.out.println("collide right");
                 }
             }
-            if(facing.equals("up")) {
-                if(
-                        posX+width >= collision.posX
+            if (facing.equals("up")) {
+                if (posX + width >= collision.posX
                         && posY + height >= collision.posY
                         && posY <= collision.posY + height
-                        && posX <= collision.posX + collision.width
-                        ) {
+                        && posX <= collision.posX + collision.width) {
                     collide = true;
                     System.out.println("collide down");
                 }
             }
-                
-//            if (facing.equals("down")) {
-//                if (posY <= collision.getPosY() + collision.getHeight()
-//                        && posX + width >= collision.getPosX()
-//                        && posX <= collision.getPosX() + collision.getWidth()
-//                        && posY + height >= collision.getPosY()) {
-//                    collide = true;
-//                    System.out.println("collision up");
-//                }
-//            } else if (facing.equals("up")) {
-//                if (posY <= collision.getPosY() + collision.height
-//                        && posX + width >= collision.getPosX()
-//                        && posX <= collision.getPosX() + collision.getWidth()
-//                        && posY + height >= collision.getPosY()) {
-//                    collide = true;
-//                    System.out.println("collision down");
-//                }
-//            } else {
-//                collide = false;
-//            }
-//
-//            if (facing.equals("right")) {
-//                if (posY + height >= collision.getPosY()
-//                        && posX + width >= collision.getPosX()
-//                        && posY <= collision.getPosY() + collision.getHeight()
-//                        && posX <= collision.getPosX() + collision.width) {
-//                    collide = true;
-//                    System.out.println("collision left");
-//                } 
-//            } else if (facing.equals("left")) {
-//                if (posY + height >= collision.posY
-//                        && posY <= collision.getPosY() + collision.getHeight()
-//                        && posX <= collision.getPosX() + collision.getWidth()
-//                        && posX + width >= collision.getPosX()) {
-//                    collide = true;
-//                    System.out.println("collision right");
-//                }
-//            } else {
-//                collide = false;
-//            }
         }
 
         return collide;
+    }
+
+    public void detecterHitbox() {
+        for (GameObject go : collisions) {
+            if (go instanceof Caractere) {
+                Caractere c = (Caractere) go;
+                System.out.println(c.nom);
+            }
+        }
     }
 
 }

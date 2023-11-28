@@ -15,6 +15,7 @@ public abstract sealed class GameObject permits Caractere, Objet{
     protected float width;
     protected float height;
     protected float rapidite;
+    
 
     public GameObject(float posX, float posY, float width, float height, float rapidite) {
         this.posX = posX;
