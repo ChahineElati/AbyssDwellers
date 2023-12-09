@@ -13,10 +13,15 @@ import AbyssDwellersGame.model.Status;
 import java.util.ArrayList;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -121,7 +126,7 @@ public class Game extends Application {
         root.getChildren().add(healthBarFill);
 
         //preparer scene de gameplay
-        Scene scene = new Scene(root, tilesize * windowWidth, tilesize * windowHeight);
+        Scene gameplay = new Scene(root, tilesize * windowWidth, tilesize * windowHeight);
 
         //ajouter les controls pour le joueur
         dweller.ajouterCollision(ennemie1);
@@ -132,14 +137,14 @@ public class Game extends Application {
         for (Objet wall : wallsLeftMiddle) {
             dweller.ajouterCollision(wall);
         }
-        dweller.ajouterControls(scene, healthBarFill, root);
+        dweller.ajouterControls(gameplay, healthBarFill, root);
         AnimationTimer timer = new AnimationTimer() {
             long lastTimeUpdated = 0;
 
             @Override
             public void handle(long now) {
                 if (now - lastTimeUpdated >= 1000000000) {
-                    if (ennemie1.detecterHitbox(dweller) && ennemie1.getStatus().getSante()>0) {
+                    if (ennemie1.detecterHitbox(dweller) && ennemie1.getStatus().getSante() > 0) {
                         ennemie1.attacker(dweller, root);
                         healthBarFill.setWidth(118 * (dweller.getStatus().getSante() / dweller.getStatus().getSanteMax()));
                     }
@@ -150,8 +155,30 @@ public class Game extends Application {
         };
         timer.start();
 
+        //menu principale
+        VBox menuPrincipaleInterface = new VBox(30);
+        Button btnJouer = new Button("JOUER");
+        Button btnQuitter = new Button("QUITTER");
+        btnJouer.setPrefWidth(150);
+        btnQuitter.setPrefWidth(150);
+        menuPrincipaleInterface.setAlignment(Pos.TOP_CENTER);
+        menuPrincipaleInterface.setPadding(new Insets(75, 0, 0, 0));
+//        ImageView logo = new ImageView(new Image("abyss_dwellers_logo.png"));
+        StackPane sp = new StackPane();
+        sp.getStyleClass().add("image-layout");
+        menuPrincipaleInterface.getChildren().add(sp);
+        menuPrincipaleInterface.getChildren().addAll(btnJouer, btnQuitter);
+        Scene menuPrincipale = new Scene(menuPrincipaleInterface, tilesize * windowWidth, tilesize * windowHeight);
+        menuPrincipale.getStylesheets().add(getClass().getResource("gamestyle.css").toString());
+        btnJouer.setOnAction(event -> {
+            stage.setScene(gameplay);
+        });
+        btnQuitter.setOnAction(event -> {
+            stage.close();
+        });
+
         //configurer le stage
-        stage.setScene(scene);
+        stage.setScene(menuPrincipale);
         stage.setTitle("Abyss Dwellers");
         stage.setResizable(false);
         stage.show();

@@ -1,30 +1,34 @@
 package AbyssDwellersGame.model;
 
+import AbyssDwellersGame.exceptions.ValeurInacceptableException;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
 /**
  *
  * @author chahi
  */
 public class Status {
-    
+
     private float dammage;
     private float defense;
     private float sante;
     private float santeMax;
     private int niveau;
-    
-    public Status(int dammage, int defense, int sante, int santeMax, int niveau) {
-        this.dammage=dammage;
-        this.defense=defense;
-        this.sante=sante;
-        this.santeMax=santeMax;
-        this.niveau=niveau;
+
+    public Status(int dammage, int defense, int sante, int santeMax, int niveau) throws ValeurInacceptableException {
+        if(sante<=0 || sante>santeMax) {
+//            throw ValeurInacceptableException();
+        }
+        this.dammage = dammage;
+        this.defense = defense;
+        this.sante = sante;
+        this.santeMax = santeMax;
+        this.niveau = niveau;
     }
-    
+
     public float getDammage() {
         return dammage;
     }
@@ -64,6 +68,5 @@ public class Status {
     public void setNiveau(int niveau) {
         this.niveau = niveau;
     }
-    
-    
+
 }

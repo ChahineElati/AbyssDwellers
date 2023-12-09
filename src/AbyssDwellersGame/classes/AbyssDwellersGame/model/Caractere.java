@@ -9,16 +9,24 @@ import java.util.Timer;
 import java.util.TimerTask;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.ColorInput;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
@@ -264,7 +272,28 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
             }));
             timeline.play();
             float nouvelleSante = caractere.getStatus().getSante() - status.getDammage();
-            if (nouvelleSante < 0) {
+            if (nouvelleSante <= 0) {
+                if (caractere instanceof Dweller) {
+                    Button btnQuitter = new Button("QUITTER");
+                    btnQuitter.setPrefWidth(150);
+                    VBox gameOverInterface = new VBox(30);
+                    Label message = new Label("Tu es mort");
+                    message.setFont(Font.font(21));
+                    Label gameOverLabel = new Label("Game Over");
+                    gameOverLabel.setFont(Font.font("", FontWeight.BOLD, 35));
+                    gameOverInterface.setAlignment(Pos.CENTER);
+                    gameOverInterface.getStylesheets().add(getClass().getResource("/AbyssDwellersGame/gamestyle.css").toString());
+                    gameOverInterface.getChildren().addAll(gameOverLabel, message, btnQuitter);
+                    gameOverInterface.setSpacing(30);
+
+                    Scene scene = new Scene(gameOverInterface, root.getScene().getWidth(), root.getScene().getHeight());
+                    Stage stage = (Stage) root.getScene().getWindow();
+                    stage.setScene(scene);
+
+                    btnQuitter.setOnAction(event -> {
+                        stage.close();
+                    });
+                }
                 caractere.getStatus().setSante(0);
                 root.getChildren().remove(caractere.image);
                 if (this instanceof Dweller) {

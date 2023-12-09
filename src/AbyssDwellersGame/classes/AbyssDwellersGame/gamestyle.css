@@ -1,0 +1,44 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Dec 9, 2023, 7:29:54 AM
+    Author     : chahi
+*/
+
+.root
+{
+    -fx-background-image: url(../background.png);
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: contain;
+}
+
+.button{
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 20;
+    -fx-background-color: #1f1290;
+    -fx-font-family:"Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 2em;
+    -fx-text-fill: #cccccc;
+    -fx-border-width:3;
+    -fx-border-color: #b0a9f3;
+    -fx-border-radius: 20;
+}
+
+.label {
+    -fx-text-fill: #cccccc;
+}
+
+.button:hover {
+    -fx-background-color: #6657e9;
+}
+
+.image-layout {
+    -fx-pref-height: 200;
+    -fx-max-width: 500;
+    -fx-background-image: url(../abyss-dwellers-logo.png);
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: contain;
+}
