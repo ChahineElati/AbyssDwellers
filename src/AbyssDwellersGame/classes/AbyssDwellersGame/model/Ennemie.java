@@ -4,6 +4,7 @@
  */
 package AbyssDwellersGame.model;
 
+import java.time.Duration;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -11,13 +12,16 @@ import javafx.scene.image.ImageView;
  *
  * @author chahi
  */
-public final class Ennemie extends Caractere {
-    
-     private boolean agressive;
+public final class Ennemie extends Caractere implements Runnable {
 
-    public Ennemie(boolean agressive, String nom, boolean jouable, float posX, float posY, float width, float height, float rapidite, Image[] sprites) {
+    private boolean agressive;
+    private Dweller dweller;
+    private String[] moving = {"right", "left", "down", ""};
+
+    public Ennemie(boolean agressive, String nom, boolean jouable, float posX, float posY, float width, float height, float rapidite, Image[] sprites, Dweller dweller) {
         super(nom, jouable, posX, posY, width, height, rapidite, sprites);
         this.agressive = agressive;
+        this.dweller = dweller;
     }
 
     public boolean isAgressive() {
@@ -27,6 +31,19 @@ public final class Ennemie extends Caractere {
     public void setAgressive(boolean agressive) {
         this.agressive = agressive;
     }
-    
-    
+
+    @Override
+    public void run() {
+        while (true) {
+            if (this.detecterHitbox(dweller)) {
+
+                try {
+                    Thread.sleep(Duration.ofMillis(500));
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+                System.out.println(dweller.getStatus().getSante());
+            }
+        }
+    }
 }

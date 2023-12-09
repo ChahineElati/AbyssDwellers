@@ -11,10 +11,10 @@ package AbyssDwellersGame.model;
  */
 public class Status {
     
-    private int dammage;
-    private int defense;
-    private int sante;
-    private int santeMax;
+    private float dammage;
+    private float defense;
+    private float sante;
+    private float santeMax;
     private int niveau;
     
     public Status(int dammage, int defense, int sante, int santeMax, int niveau) {
@@ -25,24 +25,45 @@ public class Status {
         this.niveau=niveau;
     }
     
-    public int getDammage() {
+    public float getDammage() {
         return dammage;
     }
 
-    public int getDefense() {
+    public float getDefense() {
         return defense;
     }
 
-    public int getSante() {
+    public float getSante() {
         return sante;
     }
 
-    public int getSanteMax() {
+    public float getSanteMax() {
         return santeMax;
     }
 
     public int getNiveau() {
         return niveau;
     }
+
+    public void setDammage(float dammage) {
+        this.dammage = dammage;
+    }
+
+    public void setDefense(float defense) {
+        this.defense = defense;
+    }
+
+    public void setSante(float sante) {
+        this.sante = sante;
+    }
+
+    public void setSanteMax(float santeMax) {
+        this.santeMax = santeMax;
+    }
+
+    public void setNiveau(int niveau) {
+        this.niveau = niveau;
+    }
+    
     
 }

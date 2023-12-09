@@ -24,6 +24,8 @@ public  sealed abstract class Objet extends GameObject permits ObjetStatique, Ob
         this.image.setImage(image);
         this.image.setX(posX);
         this.image.setY(posY);
+        this.image.setFitWidth(width);
+        this.image.setFitHeight(height);
     }
     
     public String getNom() {
