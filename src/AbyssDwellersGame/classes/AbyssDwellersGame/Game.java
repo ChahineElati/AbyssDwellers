@@ -12,6 +12,7 @@ import AbyssDwellersGame.model.Key;
 import AbyssDwellersGame.model.Objet;
 import AbyssDwellersGame.model.ObjetStatique;
 import AbyssDwellersGame.model.Status;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -24,6 +25,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -33,6 +36,16 @@ import javafx.stage.Stage;
  * @author chahi
  */
 public class Game extends Application {
+
+    MediaPlayer mediaPlayer;
+
+    public void music() {
+        String s = "ingame.mp3";
+        Media h = new Media(Paths.get(s).toUri().toString());
+        mediaPlayer = new MediaPlayer(h);
+        mediaPlayer.play();
+
+    }
 
     @Override
     public void start(Stage stage) throws InterruptedException, ValeurInacceptableException {
@@ -165,6 +178,7 @@ public class Game extends Application {
         timer.start();
 
         //menu principale
+        music();
         VBox menuPrincipaleInterface = new VBox(30);
         Button btnJouer = new Button("JOUER");
         Button btnQuitter = new Button("QUITTER");
