@@ -8,7 +8,7 @@ package AbyssDwellersGame.model;
  *
  * @author chahi
  */
-public class Item {
+public sealed abstract class Item permits PotionSante, PotionMana{
     
     String label;
     String description;
@@ -26,5 +26,6 @@ public class Item {
         return description;
     }
     
+    abstract public void activerEffet(Status status);
     
 }

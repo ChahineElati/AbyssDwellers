@@ -4,9 +4,11 @@
  */
 package AbyssDwellersGame;
 
+import AbyssDwellersGame.exceptions.ValeurInacceptableException;
 import AbyssDwellersGame.model.Coffre;
 import AbyssDwellersGame.model.Dweller;
 import AbyssDwellersGame.model.Ennemie;
+import AbyssDwellersGame.model.Key;
 import AbyssDwellersGame.model.Objet;
 import AbyssDwellersGame.model.ObjetStatique;
 import AbyssDwellersGame.model.Status;
@@ -33,7 +35,7 @@ import javafx.stage.Stage;
 public class Game extends Application {
 
     @Override
-    public void start(Stage stage) throws InterruptedException {
+    public void start(Stage stage) throws InterruptedException, ValeurInacceptableException {
 
         //dessiner l'environnement
         final int tilesize = 45;
@@ -68,23 +70,28 @@ public class Game extends Application {
         wallsLeftMiddle.add(new ObjetStatique("wall-left-middle", 0, 65 + 49 * 8, 22, 49, 0, new Image("wall-left-middle.png"), "wall left middle"));
         wallsLeftMiddle.add(new ObjetStatique("wall-left-bottom", 0, windowHeight * tilesize - 57, 22, 57, 0, new Image("wall-left-bottom.png"), "wall left bottom"));
         wallsLeftMiddle.add(new ObjetStatique("wall-right-bottom", windowWidth * tilesize - 22, windowHeight * tilesize - 57, 22, 57, 0, new Image("wall-right-bottom.png"), "wall right bottom"));
-        wallsLeftMiddle.add(new ObjetStatique("ruin1", 100, 100, 30, 30, 0, new Image("White_ruins5.png"), "ruin"));
+//        wallsLeftMiddle.add(new ObjetStatique("ruin1", 100, 100, 29, 22, 0, new Image("White_ruins5.png"), "ruin"));
         wallsLeftMiddle.add(new ObjetStatique("ruin2", 150, 310, 64, 64, 0, new Image("White_ruins3.png"), "ruin"));
         wallsLeftMiddle.add(new ObjetStatique("hajra1", 350, 50, 30, 30, 0, new Image("Icons_33.png"), "hajra"));
         wallsLeftMiddle.add(new ObjetStatique("hajra2", 400, 300, 32, 32, 0, new Image("Icons_28.png"), "7outa"));
-        wallsLeftMiddle.add(new Coffre("coffre", 450, 80, 32, 27, 0, new Image("sondouk.png"), "un coffre mysterieux!", 10, true));
         walls.add(new ObjetStatique("wall", 0, 0, 204, 78, 0, new Image("wall1.png"), "wall"));
         walls.add(new ObjetStatique("wall", 204, 0, 204, 78, 0, new Image("wall1.png"), "wall"));
         walls.add(new ObjetStatique("wall", 204 * 2, 0, 204, 78, 0, new Image("wall1.png"), "wall"));
         walls.add(new ObjetStatique("wall", 204 * 3, 0, 204, 78, 0, new Image("wall1.png"), "wall"));
-
-        //créer 1er caractère dweller
+        ObjetStatique ob1 = new ObjetStatique("ruin1", 100, 100, 29, 22, 0, new Image("White_ruins5.png"), "ruin");
+        Coffre coffre = new Coffre("coffre", 450, 80, 32, 27, 0, new Image("sondouk.png"), "un coffre mysterieux!", 10, true, "123");
+        coffre.setLockedC(new Image("sondouk.png"));
+        coffre.setUnlockedC(new Image("sondouk_open.png"));
+        wallsLeftMiddle.add(coffre);
+        Key key = new Key("cle", 333, 333, 32, 27, 0, new Image("Icons_09.png"), "le cle", "123");
+        wallsLeftMiddle.add(key);
+//créer 1er caractère dweller
         Image[] sprites = {
             new Image("dweller1-down.png"),
             new Image("dweller1-up.png"),
             new Image("dweller1-right.png"),
             new Image("dweller1-left.png"),};
-        Dweller dweller = new Dweller(0, 0, "Chahine", true, 300, 300, 30, 52, 5, sprites);
+        Dweller dweller = new Dweller(0, 0, "Chahine", true, 300, 200, 30, 52, 5, sprites);
         dweller.setStatus(new Status(4, 3, 20, 20, 1));
         Ennemie ennemie1 = new Ennemie(true, "goblin", false, 150, 150, 29, 55, 5, new Image[]{
             new Image("goblin-down.png"),}, dweller);
@@ -114,6 +121,7 @@ public class Game extends Application {
         }
         root.getChildren().add(dweller.getImage());
         root.getChildren().add(ennemie1.getImage());
+        root.getChildren().add(ob1.getImage());
 
         //dessiner HUD
         Rectangle healthBarFill = new Rectangle(41, 21, 118 * (dweller.getStatus().getSante() / dweller.getStatus().getSanteMax()), 18);
@@ -134,10 +142,11 @@ public class Game extends Application {
             dweller.ajouterCollision(wall);
         }
         dweller.ajouterCollision(wallLeftTop);
+        dweller.ajouterCollision(ob1);
         for (Objet wall : wallsLeftMiddle) {
             dweller.ajouterCollision(wall);
         }
-        dweller.ajouterControls(gameplay, healthBarFill, root);
+        dweller.ajouterControls(gameplay, healthBarFill, root, coffre);
         AnimationTimer timer = new AnimationTimer() {
             long lastTimeUpdated = 0;
 

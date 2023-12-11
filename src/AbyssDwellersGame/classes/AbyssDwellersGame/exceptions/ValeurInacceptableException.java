@@ -11,6 +11,6 @@ package AbyssDwellersGame.exceptions;
 public class ValeurInacceptableException extends Exception {
     
     public  ValeurInacceptableException() {
-        super("La valeur doit etre inférieure à la valeur max et superieur à 0");
+        super("La valeur doit etre inferieure a la valeur max et superieur a 0");
     }
 }

@@ -11,20 +11,13 @@ import java.util.ArrayList;
  * @author chahi
  */
 public class Inventaire {
-    
+
     private ArrayList<Item> items;
-    private int nombreItemsMax;
 
-    public Inventaire(int nombreItemsMax) {
-        this.nombreItemsMax = nombreItemsMax;
+    public Inventaire() {
+        items = new ArrayList<>();
     }
 
-    public int getNombreItemsMax() {
-        return nombreItemsMax;
-    }
-
-    public void setNombreItemsMax(int nombreItemsMax) {
-        this.nombreItemsMax = nombreItemsMax;
-    }
+    
     
 }

@@ -16,17 +16,20 @@ public class Status {
     private float defense;
     private float sante;
     private float santeMax;
+    private float mana;
+    private float maxMana;
     private int niveau;
 
     public Status(int dammage, int defense, int sante, int santeMax, int niveau) throws ValeurInacceptableException {
         if(sante<=0 || sante>santeMax) {
-//            throw ValeurInacceptableException();
+            throw new ValeurInacceptableException();
         }
         this.dammage = dammage;
         this.defense = defense;
         this.sante = sante;
         this.santeMax = santeMax;
         this.niveau = niveau;
+        
     }
 
     public float getDammage() {
@@ -49,6 +52,8 @@ public class Status {
         return niveau;
     }
 
+    
+    
     public void setDammage(float dammage) {
         this.dammage = dammage;
     }

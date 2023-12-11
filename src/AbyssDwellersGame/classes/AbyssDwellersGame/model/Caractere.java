@@ -5,6 +5,7 @@
 package AbyssDwellersGame.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.animation.KeyFrame;
@@ -45,18 +46,7 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
     private String facing = "down";
     private Status status;
     private String moving;
-
-    public Inventaire getInventaire() {
-        return inventaire;
-    }
-
-    public ImageView getImage() {
-        return image;
-    }
-
-    public Image[] getSprites() {
-        return sprites;
-    }
+    private boolean hashKey;
 
     public Caractere(String nom, boolean jouable, float posX, float posY, float width, float height, float rapidite, Image[] sprites) {
         super(posX, posY, width, height, rapidite);
@@ -70,6 +60,26 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
         this.sprites = sprites;
         collisions = new ArrayList<>();
         moving = "";
+    }
+
+    public Inventaire getInventaire() {
+        return inventaire;
+    }
+
+    public ImageView getImage() {
+        return image;
+    }
+
+    public Image[] getSprites() {
+        return sprites;
+    }
+
+    public boolean hashKey() {
+        return hashKey;
+    }
+
+    public void setHashKey(boolean hashKey) {
+        this.hashKey = hashKey;
     }
 
     public String getNom() {
@@ -108,8 +118,25 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
         this.status = status;
     }
 
-    public void ajouterControls(Scene scene, Rectangle healthBarFill, Group root) {
+    public void ajouterControls(Scene scene, Rectangle healthBarFill, Group root, Coffre coffre) {
         scene.setOnKeyPressed((e) -> {
+            for (GameObject objet : collisions) {
+                if (objet instanceof ObjetInteractif) {
+
+                    if (detecterHitbox(objet)) {
+
+                        if (!root.getChildren().contains(((ObjetInteractif) objet).getIndicator())) {
+                            root.getChildren().add(((ObjetInteractif) objet).getIndicator());
+                        } else if (objet instanceof Coffre) {
+                            if (!root.getChildren().contains(((ObjetInteractif) objet).getIndicator())) {
+                                root.getChildren().add(((ObjetInteractif) objet).getIndicator());
+                            }
+                        }
+                    } else {
+                        root.getChildren().remove(((ObjetInteractif) objet).getIndicator());
+                    }
+                }
+            }
             if (e.getCode().toString().equals("DOWN")) {
                 facing = "down";
                 if (!detecterCollision()) {
@@ -198,6 +225,34 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                         System.out.println(c.getNom() + " life points:");
                         attacker(c, root);
                     }
+                }
+
+            }
+            if (e.getCode().toString().equals("X")) {
+
+                Iterator<GameObject> iterator = collisions.iterator();
+                while (iterator.hasNext()) {
+                    GameObject objet = iterator.next();
+                    if (objet instanceof Key && detecterHitbox(objet)) {
+
+                        iterator.remove();
+                        // Dweller has the key
+                        Key key = (Key) objet;
+                        collisions.remove(key);
+                        root.getChildren().remove(key.getImage());
+                        root.getChildren().remove(key.getIndicator());
+                        hashKey = true;
+                        System.out.println("Key found!");
+                    }
+                }
+            }
+            if (e.getCode().toString().equals("C")) {
+                if (coffre.isVerrouille() && hashKey()) {
+                    coffre.deverrouiller();
+                    root.getChildren().remove(coffre.getIndicator());
+                    System.out.println("Chest is unlocked!");
+                } else {
+                    System.out.println("You don't have the key to unlock the chest.");
                 }
             }
         }
