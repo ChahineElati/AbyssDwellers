@@ -4,18 +4,25 @@
  */
 package AbyssDwellersGame.model;
 
+import javafx.scene.image.Image;
+
 /**
  *
  * @author chahi
  */
-public sealed abstract class Item permits PotionSante, PotionMana{
-    
-    String label;
-    String description;
+public sealed abstract class Item permits PotionSante, PotionMana {
 
-    public Item(String label, String description) {
+    private String label;
+    private String description;
+    private int nombre;
+    private  Image icon;
+
+    public Item(String label, String description, int nombre, Image icon) {
         this.label = label;
         this.description = description;
+        this.nombre = nombre;
+        this.icon = icon;
+
     }
 
     public String getLabel() {
@@ -25,7 +32,16 @@ public sealed abstract class Item permits PotionSante, PotionMana{
     public String getDescription() {
         return description;
     }
+
+    public int getNombre() {
+        return nombre;
+    }
+
+    public Image getIcon() {
+        return icon;
+    }
     
+
     abstract public void activerEffet(Status status);
-    
+
 }

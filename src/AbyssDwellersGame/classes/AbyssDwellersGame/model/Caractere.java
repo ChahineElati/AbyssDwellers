@@ -6,28 +6,36 @@ package AbyssDwellersGame.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.geometry.Insets;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.effect.Blend;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.effect.BlendMode;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.effect.ColorInput;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Callback;
 import javafx.util.Duration;
 
 /**
@@ -116,6 +124,93 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public void setInventaire(Inventaire inventaire) {
+        this.inventaire = inventaire;
+    }
+
+    public void visualiserInventaire(Stage inventaire) {
+        final ObservableList<Item> data = FXCollections.observableArrayList(this.inventaire.getItems());
+        HBox windowButtons = new HBox();
+        windowButtons.setAlignment(Pos.TOP_RIGHT);
+        Button closeBtn = new Button("X");
+        closeBtn.setOnAction(e -> {
+            inventaire.close();
+        });
+        windowButtons.getChildren().add(closeBtn);
+        TableView<Item> itemsTableView = new TableView<>();
+        TableColumn icon = new TableColumn();
+        TableColumn item = new TableColumn("Item");
+        TableColumn description = new TableColumn("Description");
+        TableColumn effet = new TableColumn("Effet");
+        TableColumn nombre = new TableColumn("Nombre");
+        item.setCellValueFactory(new PropertyValueFactory<>("label"));
+        description.setCellValueFactory(new PropertyValueFactory<>("description"));
+        nombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        effet.setCellValueFactory(new Callback<CellDataFeatures<Item, String>, ObservableValue<String>>() {
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<Item, String> p) {
+                if (p.getValue() instanceof PotionMana mana) {
+                    return new ReadOnlyStringWrapper(String.valueOf(mana.getEffetMana()));
+                } else if (p.getValue() instanceof PotionSante sante) {
+                    return new ReadOnlyStringWrapper(String.valueOf(sante.getEffetSante()));
+                } else {
+                    return null;
+                }
+            }
+        });
+        icon.setCellFactory(param -> {
+            //Set up the ImageView
+            final ImageView imageview = new ImageView();
+            imageview.setFitHeight(50);
+            imageview.setFitWidth(50);
+
+            //Set up the Table
+            TableCell<Item, Image> cell = new TableCell<Item, Image>() {
+                @Override
+                public void updateItem(Image item, boolean empty) {
+                    if (item != null) {
+                        imageview.setImage(item);
+                    }
+                }
+            };
+            // Attach the imageview to the cell
+            cell.setGraphic(imageview);
+            return cell;
+        });
+        icon.setCellValueFactory(new PropertyValueFactory<Item, Image>("icon"));
+        icon.setPrefWidth(50);
+        icon.setResizable(false);
+        icon.setReorderable(false);
+        icon.setSortable(false);
+        item.setPrefWidth(100);
+        item.setResizable(false);
+        item.setReorderable(false);
+        item.setSortable(false);
+        description.setPrefWidth(150);
+        description.setResizable(false);
+        description.setReorderable(false);
+        description.setSortable(false);
+        effet.setPrefWidth(50);
+        effet.setResizable(false);
+        effet.setReorderable(false);
+        effet.setSortable(false);
+        nombre.setPrefWidth(55);
+        nombre.setResizable(false);
+        nombre.setReorderable(false);
+        nombre.setSortable(false);
+        itemsTableView.getColumns().addAll(icon, item, description, effet, nombre);
+        itemsTableView.setItems(data);
+        VBox holder = new VBox();
+        holder.getChildren().add(windowButtons);
+        holder.getChildren().add(itemsTableView);
+        Scene sc = new Scene(holder, 407, 300);
+        inventaire.setScene(sc);
+        inventaire.initStyle(StageStyle.UNDECORATED);
+        sc.getStylesheets().add(getClass().getResource("/AbyssDwellersGame/ingamestyle.css").toString());
+
+        inventaire.show();
     }
 
     public void ajouterControls(Scene scene, Rectangle healthBarFill, Group root, Coffre coffre) {
@@ -251,9 +346,14 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                     coffre.deverrouiller();
                     root.getChildren().remove(coffre.getIndicator());
                     System.out.println("Chest is unlocked!");
+                    
                 } else {
                     System.out.println("You don't have the key to unlock the chest.");
                 }
+            }
+            if (e.getCode().equals(KeyCode.M)) {
+                Stage inventaire = new Stage();
+                visualiserInventaire(inventaire);
             }
         }
         );
@@ -350,10 +450,11 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                     });
                 }
                 caractere.getStatus().setSante(0);
-                root.getChildren().remove(caractere.image);
+
                 if (this instanceof Dweller) {
                     collisions.remove(caractere);
                 }
+                root.getChildren().remove(caractere.image);
             } else {
                 caractere.getStatus().setSante(nouvelleSante);
             }

@@ -8,10 +8,14 @@ import AbyssDwellersGame.exceptions.ValeurInacceptableException;
 import AbyssDwellersGame.model.Coffre;
 import AbyssDwellersGame.model.Dweller;
 import AbyssDwellersGame.model.Ennemie;
+import AbyssDwellersGame.model.Inventaire;
 import AbyssDwellersGame.model.Key;
 import AbyssDwellersGame.model.Objet;
 import AbyssDwellersGame.model.ObjetStatique;
+import AbyssDwellersGame.model.PotionMana;
+import AbyssDwellersGame.model.PotionSante;
 import AbyssDwellersGame.model.Status;
+import java.awt.HeadlessException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import javafx.animation.AnimationTimer;
@@ -30,23 +34,29 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  *
  * @author chahi
  */
 public class Game extends Application {
-
+    
     MediaPlayer mediaPlayer;
-
+    
     public void music() {
         String s = "ingame.mp3";
         Media h = new Media(Paths.get(s).toUri().toString());
         mediaPlayer = new MediaPlayer(h);
+        mediaPlayer.setVolume(0.7);
+        mediaPlayer.setAutoPlay(true);
+        mediaPlayer.setOnEndOfMedia(() -> {
+            mediaPlayer.seek(Duration.ZERO);
+        });
         mediaPlayer.play();
-
+        
     }
-
+    
     @Override
     public void start(Stage stage) throws InterruptedException, ValeurInacceptableException {
 
@@ -106,6 +116,10 @@ public class Game extends Application {
             new Image("dweller1-left.png"),};
         Dweller dweller = new Dweller(0, 0, "Chahine", true, 300, 200, 30, 52, 5, sprites);
         dweller.setStatus(new Status(4, 3, 20, 20, 1));
+        Inventaire inventaire = new Inventaire();
+        inventaire.getItems().add(new PotionSante("potion sante", "augmenter points sante", 3, 10, new Image("health-potion.png")));
+        inventaire.getItems().add(new PotionMana("potion mana", "augmenter points mana", 5, 5, new Image("mana-potion.png")));
+        dweller.setInventaire(inventaire);
         Ennemie ennemie1 = new Ennemie(true, "goblin", false, 150, 150, 29, 55, 5, new Image[]{
             new Image("goblin-down.png"),}, dweller);
         ennemie1.setStatus(new Status(4, 3, 15, 15, 1));
@@ -162,7 +176,7 @@ public class Game extends Application {
         dweller.ajouterControls(gameplay, healthBarFill, root, coffre);
         AnimationTimer timer = new AnimationTimer() {
             long lastTimeUpdated = 0;
-
+            
             @Override
             public void handle(long now) {
                 if (now - lastTimeUpdated >= 1000000000) {
@@ -172,7 +186,7 @@ public class Game extends Application {
                     }
                     lastTimeUpdated = now;
                 }
-
+                
             }
         };
         timer.start();
@@ -204,9 +218,10 @@ public class Game extends Application {
         stage.setScene(menuPrincipale);
         stage.setTitle("Abyss Dwellers");
         stage.setResizable(false);
+        System.out.println(coffre.getItems());
         stage.show();
     }
-
+    
     public static void main(String[] args) {
         launch(args);
     }

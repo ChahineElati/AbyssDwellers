@@ -4,6 +4,8 @@
  */
 package AbyssDwellersGame.model;
 
+import javafx.scene.image.Image;
+
 /**
  *
  * @author chahi
@@ -11,19 +13,14 @@ package AbyssDwellersGame.model;
 public final class PotionMana extends Item {
 
     private float effetMana;
-    public static int nombre;
 
-    public PotionMana(String label, String description, int effetMana) {
-        super(label, description);
+    public PotionMana(String label, String description, int nombre, int effetMana, Image icon) {
+        super(label, description, nombre, icon);
         this.effetMana = effetMana;
     }
 
     public float getEffetMana() {
         return effetMana;
-    }
-
-    public static int getNombre() {
-        return nombre;
     }
 
     @Override
