@@ -27,7 +27,10 @@ public final class Coffre extends ObjetInteractif {
         items = new ArrayList<>();
         items.add(
                 new PotionSante("potion sante", "augmenter points sante", 2, 10, new Image("health-potion.png"))
-                );
+        );
+        items.add(
+                new PotionMana("potion mana", "augmenter points mana", 3, 5, new Image("mana-potion.png"))
+        );
     }
 
     public void setLockedC(Image lockedC) {

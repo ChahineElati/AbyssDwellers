@@ -40,6 +40,22 @@ public sealed abstract class Item permits PotionSante, PotionMana {
     public Image getIcon() {
         return icon;
     }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setNombre(int nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setIcon(Image icon) {
+        this.icon = icon;
+    }
     
 
     abstract public void activerEffet(Status status);

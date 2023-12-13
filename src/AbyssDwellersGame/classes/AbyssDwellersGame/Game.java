@@ -41,9 +41,9 @@ import javafx.util.Duration;
  * @author chahi
  */
 public class Game extends Application {
-    
+
     MediaPlayer mediaPlayer;
-    
+
     public void music() {
         String s = "ingame.mp3";
         Media h = new Media(Paths.get(s).toUri().toString());
@@ -54,9 +54,9 @@ public class Game extends Application {
             mediaPlayer.seek(Duration.ZERO);
         });
         mediaPlayer.play();
-        
+
     }
-    
+
     @Override
     public void start(Stage stage) throws InterruptedException, ValeurInacceptableException {
 
@@ -176,7 +176,7 @@ public class Game extends Application {
         dweller.ajouterControls(gameplay, healthBarFill, root, coffre);
         AnimationTimer timer = new AnimationTimer() {
             long lastTimeUpdated = 0;
-            
+
             @Override
             public void handle(long now) {
                 if (now - lastTimeUpdated >= 1000000000) {
@@ -186,7 +186,7 @@ public class Game extends Application {
                     }
                     lastTimeUpdated = now;
                 }
-                
+
             }
         };
         timer.start();
@@ -218,10 +218,9 @@ public class Game extends Application {
         stage.setScene(menuPrincipale);
         stage.setTitle("Abyss Dwellers");
         stage.setResizable(false);
-        System.out.println(coffre.getItems());
         stage.show();
     }
-    
+
     public static void main(String[] args) {
         launch(args);
     }

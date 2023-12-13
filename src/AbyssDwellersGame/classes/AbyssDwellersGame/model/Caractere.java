@@ -4,6 +4,7 @@
  */
 package AbyssDwellersGame.model;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javafx.animation.KeyFrame;
@@ -30,6 +31,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -144,7 +148,7 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
         TableColumn item = new TableColumn("Item");
         TableColumn description = new TableColumn("Description");
         TableColumn effet = new TableColumn("Effet");
-        TableColumn nombre = new TableColumn("Nombre");
+        TableColumn nombre = new TableColumn("Quantité");
         item.setCellValueFactory(new PropertyValueFactory<>("label"));
         description.setCellValueFactory(new PropertyValueFactory<>("description"));
         nombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -161,12 +165,10 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
             }
         });
         icon.setCellFactory(param -> {
-            //Set up the ImageView
             final ImageView imageview = new ImageView();
             imageview.setFitHeight(50);
             imageview.setFitWidth(50);
 
-            //Set up the Table
             TableCell<Item, Image> cell = new TableCell<Item, Image>() {
                 @Override
                 public void updateItem(Image item, boolean empty) {
@@ -175,7 +177,6 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                     }
                 }
             };
-            // Attach the imageview to the cell
             cell.setGraphic(imageview);
             return cell;
         });
@@ -196,7 +197,7 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
         effet.setResizable(false);
         effet.setReorderable(false);
         effet.setSortable(false);
-        nombre.setPrefWidth(55);
+        nombre.setPrefWidth(70);
         nombre.setResizable(false);
         nombre.setReorderable(false);
         nombre.setSortable(false);
@@ -205,7 +206,7 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
         VBox holder = new VBox();
         holder.getChildren().add(windowButtons);
         holder.getChildren().add(itemsTableView);
-        Scene sc = new Scene(holder, 407, 300);
+        Scene sc = new Scene(holder, 422, 300);
         inventaire.setScene(sc);
         inventaire.initStyle(StageStyle.UNDECORATED);
         sc.getStylesheets().add(getClass().getResource("/AbyssDwellersGame/ingamestyle.css").toString());
@@ -277,6 +278,8 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                 }
             }
             if (e.getCode().toString().equals("W")) {
+                MediaPlayer attack_sound = new MediaPlayer(new Media(Paths.get("attack-sound.mp3").toUri().toString()));
+                attack_sound.play();
                 ImageView weapon = new ImageView("knife.png");
                 if (facing.equals("up")) {
                     weapon.setFitWidth(35);
@@ -316,6 +319,8 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                 timeline.play();
                 for (GameObject go : collisions) {
                     if (detecterHitbox(go) && go instanceof Ennemie) {
+                        MediaPlayer oof_sound = new MediaPlayer(new Media(Paths.get("oof-sound.mp3").toUri().toString()));
+                        oof_sound.play();
                         Caractere c = (Caractere) go;
                         System.out.println(c.getNom() + " life points:");
                         attacker(c, root);
@@ -346,7 +351,26 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                     coffre.deverrouiller();
                     root.getChildren().remove(coffre.getIndicator());
                     System.out.println("Chest is unlocked!");
-                    
+                    inventaire.getItems().forEach(action -> {
+                        Item item = coffre.getItems().stream()
+                                .filter(it -> it.getLabel().equals(action.getLabel()))
+                                .findAny()
+                                .orElse(null);
+                        if (item != null) {
+                            action.setNombre(action.getNombre() + item.getNombre());
+                            Label messageAjoutItems = new Label("Items ajoutés");
+                            messageAjoutItems.setFont(Font.font("", FontWeight.BOLD, 18));
+                            messageAjoutItems.setTextFill(Paint.valueOf("white"));
+                            messageAjoutItems.setLayoutX(520);
+                            messageAjoutItems.setLayoutY(20);
+                            root.getChildren().add(messageAjoutItems);
+                            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
+                                root.getChildren().remove(messageAjoutItems);
+                            }));
+                            timeline.play();
+                        }
+                    });
+
                 } else {
                     System.out.println("You don't have the key to unlock the chest.");
                 }
@@ -354,6 +378,18 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
             if (e.getCode().equals(KeyCode.M)) {
                 Stage inventaire = new Stage();
                 visualiserInventaire(inventaire);
+            }
+            if (e.getCode().equals(KeyCode.Q)) {
+                PotionSante item = (PotionSante) inventaire.getItems().stream()
+                        .filter(it -> it.getLabel().equals("potion sante"))
+                        .findAny()
+                        .orElse(null);
+                if (item.getNombre() > 0) {
+                    item.activerEffet(status);
+                    item.setNombre(item.getNombre() - 1);
+                    healthBarFill.setWidth(118 * (getStatus().getSante() / getStatus().getSanteMax()));
+                }
+
             }
         }
         );
@@ -434,11 +470,12 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                     VBox gameOverInterface = new VBox(30);
                     Label message = new Label("Tu es mort");
                     message.setFont(Font.font(21));
-                    Label gameOverLabel = new Label("Game Over");
-                    gameOverLabel.setFont(Font.font("", FontWeight.BOLD, 35));
+//                    Label gameOverLabel = new Label("Game Over");
+                    ImageView rip = new ImageView(new Image("1.png"));
+//                    gameOverLabel.setFont(Font.font("", FontWeight.BOLD, 35));
                     gameOverInterface.setAlignment(Pos.CENTER);
                     gameOverInterface.getStylesheets().add(getClass().getResource("/AbyssDwellersGame/gamestyle.css").toString());
-                    gameOverInterface.getChildren().addAll(gameOverLabel, message, btnQuitter);
+                    gameOverInterface.getChildren().addAll(rip, message, btnQuitter);
                     gameOverInterface.setSpacing(30);
 
                     Scene scene = new Scene(gameOverInterface, root.getScene().getWidth(), root.getScene().getHeight());
