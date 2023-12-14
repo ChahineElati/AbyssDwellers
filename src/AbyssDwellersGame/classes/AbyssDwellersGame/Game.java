@@ -20,11 +20,14 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -32,7 +35,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -159,6 +165,22 @@ public class Game extends Application {
         healthBar.setStroke(Color.GRAY);
         root.getChildren().add(healthBar);
         root.getChildren().add(healthBarFill);
+        Label levell = new Label();
+        levell.setFont(Font.font("", FontWeight.BOLD, 18));
+        levell.setTextFill(Paint.valueOf("white"));
+        levell.setLayoutX(45);
+        levell.setLayoutY(50);
+
+        StringProperty levelprop = new SimpleStringProperty();
+
+        levelprop.set("Level: " + 1);
+        levell.textProperty().bind(levelprop);
+
+        dweller.levelProperty().addListener((observable, oldValue, newValue) -> {
+            levelprop.set("Level: " + newValue.intValue());
+        });
+
+        root.getChildren().add(levell);
 
         //preparer scene de gameplay
         Scene gameplay = new Scene(root, tilesize * windowWidth, tilesize * windowHeight);

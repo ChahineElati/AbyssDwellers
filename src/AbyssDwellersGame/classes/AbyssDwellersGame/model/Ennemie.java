@@ -12,11 +12,10 @@ import javafx.scene.image.ImageView;
  *
  * @author chahi
  */
-public final class Ennemie extends Caractere implements Runnable {
+public final class Ennemie extends Caractere {
 
     private boolean agressive;
     private Dweller dweller;
-    private String[] moving = {"right", "left", "down", ""};
 
     public Ennemie(boolean agressive, String nom, boolean jouable, float posX, float posY, float width, float height, float rapidite, Image[] sprites, Dweller dweller) {
         super(nom, jouable, posX, posY, width, height, rapidite, sprites);
@@ -32,18 +31,4 @@ public final class Ennemie extends Caractere implements Runnable {
         this.agressive = agressive;
     }
 
-    @Override
-    public void run() {
-        while (true) {
-            if (this.detecterHitbox(dweller)) {
-
-                try {
-                    Thread.sleep(Duration.ofMillis(500));
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-                System.out.println(dweller.getStatus().getSante());
-            }
-        }
-    }
 }

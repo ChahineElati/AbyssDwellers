@@ -12,6 +12,7 @@ import java.util.ArrayList;
  */
 public class Inventaire {
 
+    private int nombreItemsMax;
     private ArrayList<Item> items;
 
     public Inventaire() {

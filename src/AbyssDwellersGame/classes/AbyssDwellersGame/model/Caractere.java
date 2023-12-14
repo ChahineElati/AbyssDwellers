@@ -7,10 +7,13 @@ package AbyssDwellersGame.model;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
+import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.beans.property.SimpleFloatProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -59,6 +62,13 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
     private Status status;
     private String moving;
     private boolean hashKey;
+    private int xp;
+    private int level;
+    private AnimationTimer animationMovement;
+    private Image[] mvtSpritesLeft = {new Image("dweller1-left.png"), new Image("dweller2-left.png"), new Image("dweller3-left.png")};
+    private Image[] mvtSpritesRight = {new Image("dweller1-right.png"), new Image("dweller2-right.png"), new Image("dweller3-right.png")};
+    private Image[] mvtSpritesUp = {new Image("dweller1-up.png"), new Image("dweller2-up.png"), new Image("dweller3-up.png")};
+    private Image[] mvtSpritesDown = {new Image("dweller1-down.png"), new Image("dweller2-down.png"), new Image("dweller3-down.png")};
 
     public Caractere(String nom, boolean jouable, float posX, float posY, float width, float height, float rapidite, Image[] sprites) {
         super(posX, posY, width, height, rapidite);
@@ -72,6 +82,30 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
         this.sprites = sprites;
         collisions = new ArrayList<>();
         moving = "";
+        xp = 0;
+        level = 1;
+    }
+
+    private SimpleIntegerProperty levelProperty = new SimpleIntegerProperty(1);
+
+    public ReadOnlyIntegerProperty levelProperty() {
+        return levelProperty;
+    }
+
+    public void setLevel(int level) {
+        this.levelProperty.set(level);
+    }
+
+    public int getLevel() {
+        return levelProperty.get();
+    }
+
+    public int getXp() {
+        return xp;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
     }
 
     public Inventaire getInventaire() {
@@ -133,6 +167,8 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
     public void setInventaire(Inventaire inventaire) {
         this.inventaire = inventaire;
     }
+
+    
 
     public void visualiserInventaire(Stage inventaire) {
         final ObservableList<Item> data = FXCollections.observableArrayList(this.inventaire.getItems());
@@ -215,6 +251,86 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
     }
 
     public void ajouterControls(Scene scene, Rectangle healthBarFill, Group root, Coffre coffre) {
+        AnimationTimer animationRight = new AnimationTimer() {
+            long lastTimeUpdated = 0;
+            int indice = -1;
+
+            @Override
+            public void handle(long now) {
+                if (now - lastTimeUpdated >= 200_000_000) {
+                    indice++;
+                    if (indice < mvtSpritesRight.length) {
+                        image.setImage(mvtSpritesRight[indice]);
+                    } else {
+                        indice = 0;
+                        image.setImage(mvtSpritesRight[indice]);
+                    }
+                    lastTimeUpdated = now;
+                } else {
+                }
+            }
+        };
+
+        AnimationTimer animationDown = new AnimationTimer() {
+            long lastTimeUpdated = 0;
+            int indice = -1;
+
+            @Override
+            public void handle(long now) {
+                if (now - lastTimeUpdated >= 200_000_000) {
+                    indice++;
+                    if (indice < mvtSpritesDown.length) {
+                        image.setImage(mvtSpritesDown[indice]);
+                    } else {
+                        indice = 0;
+                        image.setImage(mvtSpritesDown[indice]);
+                    }
+                    lastTimeUpdated = now;
+                } else {
+                }
+            }
+        };
+
+        AnimationTimer animationLeft = new AnimationTimer() {
+            long lastTimeUpdated = 0;
+            int indice = -1;
+
+            @Override
+            public void handle(long now) {
+                if (now - lastTimeUpdated >= 200_000_000) {
+                    indice++;
+                    if (indice < mvtSpritesLeft.length) {
+                        image.setImage(mvtSpritesLeft[indice]);
+                    } else {
+                        indice = 0;
+                        image.setImage(mvtSpritesLeft[indice]);
+                    }
+                    lastTimeUpdated = now;
+                } else {
+                }
+            }
+        };
+
+        AnimationTimer animationUp = new AnimationTimer() {
+            long lastTimeUpdated = 0;
+            int indice = -1;
+
+            @Override
+            public void handle(long now) {
+                if (now - lastTimeUpdated >= 200_000_000) {
+                    indice++;
+                    if (indice < mvtSpritesUp.length) {
+                        image.setImage(mvtSpritesUp[indice]);
+                    } else {
+                        indice = 0;
+                        image.setImage(mvtSpritesUp[indice]);
+                    }
+                    lastTimeUpdated = now;
+                } else {
+                }
+            }
+        };
+
         scene.setOnKeyPressed((e) -> {
             for (GameObject objet : collisions) {
                 if (objet instanceof ObjetInteractif) {
@@ -234,44 +350,44 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
                 }
             }
             if (e.getCode().toString().equals("DOWN")) {
+                animationDown.start();
                 facing = "down";
                 if (!detecterCollision()) {
                     moving = "down";
                     posY += rapidite;
-                    image.setImage(sprites[0]);
                     image.setY(posY);
                 } else {
                     posY -= 3 * rapidite;
                 }
             }
             if (e.getCode().toString().equals("UP")) {
+                animationUp.start();
                 facing = "up";
                 if (!detecterCollision()) {
                     moving = "up";
                     posY -= rapidite;
-                    image.setImage(sprites[1]);
                     image.setY(posY);
                 } else {
                     posY += 3 * rapidite;
                 }
             }
             if (e.getCode().toString().equals("RIGHT")) {
+                animationRight.start();
                 facing = "right";
                 if (!detecterCollision()) {
                     moving = "right";
                     posX += rapidite;
-                    image.setImage(sprites[2]);
                     image.setX(posX);
                 } else {
                     posX -= 3 * rapidite;
                 }
             }
             if (e.getCode().toString().equals("LEFT")) {
+                animationLeft.start();
                 facing = "left";
                 if (!detecterCollision()) {
                     moving = "left";
                     posX -= rapidite;
-                    image.setImage(sprites[3]);
                     image.setX(posX);
                 } else {
                     posX += 3 * rapidite;
@@ -348,28 +464,30 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
             }
             if (e.getCode().toString().equals("C")) {
                 if (coffre.isVerrouille() && hashKey()) {
-                    coffre.deverrouiller();
-                    root.getChildren().remove(coffre.getIndicator());
-                    System.out.println("Chest is unlocked!");
-                    inventaire.getItems().forEach(action -> {
-                        Item item = coffre.getItems().stream()
-                                .filter(it -> it.getLabel().equals(action.getLabel()))
-                                .findAny()
-                                .orElse(null);
-                        if (item != null) {
-                            action.setNombre(action.getNombre() + item.getNombre());
-                            Label messageAjoutItems = new Label("Items ajoutés");
-                            messageAjoutItems.setFont(Font.font("", FontWeight.BOLD, 18));
-                            messageAjoutItems.setTextFill(Paint.valueOf("white"));
-                            messageAjoutItems.setLayoutX(520);
-                            messageAjoutItems.setLayoutY(20);
-                            root.getChildren().add(messageAjoutItems);
-                            Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
-                                root.getChildren().remove(messageAjoutItems);
-                            }));
-                            timeline.play();
-                        }
-                    });
+                    if (detecterHitbox(coffre)) {
+                        coffre.deverrouiller();
+                        root.getChildren().remove(coffre.getIndicator());
+                        System.out.println("Chest is unlocked!");
+                        inventaire.getItems().forEach(action -> {
+                            Item item = coffre.getItems().stream()
+                                    .filter(it -> it.getLabel().equals(action.getLabel()))
+                                    .findAny()
+                                    .orElse(null);
+                            if (item != null) {
+                                action.setNombre(action.getNombre() + item.getNombre());
+                                Label messageAjoutItems = new Label("Items ajoutés");
+                                messageAjoutItems.setFont(Font.font("", FontWeight.BOLD, 18));
+                                messageAjoutItems.setTextFill(Paint.valueOf("white"));
+                                messageAjoutItems.setLayoutX(520);
+                                messageAjoutItems.setLayoutY(20);
+                                root.getChildren().add(messageAjoutItems);
+                                Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), ev -> {
+                                    root.getChildren().remove(messageAjoutItems);
+                                }));
+                                timeline.play();
+                            }
+                        });
+                    }
 
                 } else {
                     System.out.println("You don't have the key to unlock the chest.");
@@ -393,6 +511,25 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
             }
         }
         );
+        scene.setOnKeyReleased(e -> {
+            if (e.getCode().equals(KeyCode.RIGHT)) {
+                animationRight.stop();
+                image.setImage(mvtSpritesRight[0]);
+            }
+            if (e.getCode().equals(KeyCode.LEFT)) {
+                animationLeft.stop();
+                image.setImage(mvtSpritesLeft[0]);
+            }
+            if (e.getCode().equals(KeyCode.UP)) {
+                animationUp.stop();
+                image.setImage(mvtSpritesUp[0]);
+            }
+            if (e.getCode().equals(KeyCode.DOWN)) {
+                animationDown.stop();
+                image.setImage(mvtSpritesDown[0]);
+            }
+
+        });
     }
 
     public void ajouterCollision(GameObject caractere) {
@@ -490,6 +627,12 @@ public sealed abstract class Caractere extends GameObject permits Dweller, Ennem
 
                 if (this instanceof Dweller) {
                     collisions.remove(caractere);
+                    this.setXp(this.getXp() + 1000);
+                    if (this.getXp() >= 1000) {
+                        this.setLevel(this.getLevel() + 1);
+                        System.out.print("level up: " + this.getLevel());
+
+                    }
                 }
                 root.getChildren().remove(caractere.image);
             } else {
